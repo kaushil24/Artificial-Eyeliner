@@ -49,7 +49,8 @@ def getEyelinerPoints(eye_landmark_points):
 
     return [(L_interp_x, L_interp_top_y, L_interp_bottom_y), (R_interp_x, R_interp_top_y, R_interp_bottom_y)]
 
-def drawEyeliner(img, interp_pts, thickness=2):
+
+def drawEyeliner(img, interp_pts, thickness = 0.5):
     L_eye_interp, R_eye_interp = interp_pts
 
     L_interp_x, L_interp_top_y, L_interp_bottom_y = L_eye_interp
@@ -74,11 +75,11 @@ def drawEyeliner(img, interp_pts, thickness=2):
         y1_top = R_interp_top_y[i]
         x2 = R_interp_x[i+1]
         y2_top = R_interp_top_y[i+1]
-        cv2.line(img, (x1, y1_top), (x2, y2_top), (0,0,0), 2)
+        cv2.line(img, (x1, y1_top), (x2, y2_top), (0,0,0), thickness)
 
         y1_bottom = R_interp_bottom_y[i]
         y2_bottom = R_interp_bottom_y[i+1]
-        cv2.line(img, (x1, y1_bottom), (x1, y2_bottom), (0,0,0), 2)
+        cv2.line(img, (x1, y1_bottom), (x1, y2_bottom), (0,0,0), thickness)
 
     return img
 
@@ -86,7 +87,7 @@ def drawEyeliner(img, interp_pts, thickness=2):
 
 
 if __name__ == "__main__":
-    cap = cv2.VideoCapture("sampleVideo.mp4") 
+    cap = cv2.VideoCapture("Media/Sample Video 1.mp4") 
     face_detector = dlib.get_frontal_face_detector()
      
 
@@ -102,11 +103,11 @@ if __name__ == "__main__":
             face_landmark_points = face_utils.shape_to_np(face_landmark_points)
             eye_landmark_points = getEyeLandnarkPts(face_landmark_points)
             eyeliner_points = getEyelinerPoints(eye_landmark_points)
-            output_frame = drawEyeliner(output_frame, eyeliner_points, 4) 
+            output_frame = drawEyeliner(output_frame, eyeliner_points, 2) 
             
         
         
-        cv2.imshow("SDSD", cv2.resize(output_frame, (600,800)))
+        cv2.imshow("SDSD", cv2.resize(output_frame, (600,600)))
 
         if cv2.waitKey(1) & 0xFF == ord('q'):
             break

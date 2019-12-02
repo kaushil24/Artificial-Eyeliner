@@ -1,2 +1,3 @@
 *.dat
 env/
+.vscode
