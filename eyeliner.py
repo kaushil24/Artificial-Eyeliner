@@ -14,6 +14,11 @@ def getEyeLandnarkPts(face_landmark_points):
     Input: Coordinates of Bounding Box single face
     Returns: eye's landmark points
     '''
+    face_landmark_points[36][0]-=5
+    face_landmark_points[39][0]+=5
+    face_landmark_points[42][0]-=5
+    face_landmark_points[45][0]+=5
+    
     L_eye_top = face_landmark_points[36: 40]
     L_eye_bottom = np.append(face_landmark_points[39: 42], face_landmark_points[36]).reshape(4,2)
 
@@ -56,18 +61,19 @@ def drawEyeliner(img, interp_pts, thickness = 0.5):
     L_interp_x, L_interp_top_y, L_interp_bottom_y = L_eye_interp
     R_interp_x, R_interp_top_y, R_interp_bottom_y = R_eye_interp
 
-    
+    overlay = np.empty(img.shape)
+    # overlay = np.zeros_like(img)
 
     for i in range(len(L_interp_x)-2):
         x1 = L_interp_x[i]
         y1_top = L_interp_top_y[i]
         x2 = L_interp_x[i+1]
         y2_top = L_interp_top_y[i+1]
-        cv2.line(img, (x1, y1_top), (x2, y2_top), (0,0,0), thickness)
+        cv2.line(overlay, (x1, y1_top), (x2, y2_top), (0,0,0), thickness)
 
         y1_bottom = L_interp_bottom_y[i]
         y2_bottom = L_interp_bottom_y[i+1]
-        cv2.line(img, (x1, y1_bottom), (x1, y2_bottom), (0,0,0), thickness)
+        cv2.line(overlay, (x1, y1_bottom), (x1, y2_bottom), (0,0,0), thickness)
 
     
     for i in range(len(R_interp_x)-2):
@@ -80,6 +86,8 @@ def drawEyeliner(img, interp_pts, thickness = 0.5):
         y1_bottom = R_interp_bottom_y[i]
         y2_bottom = R_interp_bottom_y[i+1]
         cv2.line(img, (x1, y1_bottom), (x1, y2_bottom), (0,0,0), thickness)
+
+    img = cv2.addWeighted(overlay, 0.5, img, 0.5, 0, dtype = cv2.CV_32F)
 
     return img
 
