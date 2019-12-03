@@ -1,5 +1,5 @@
 # Artificial-Eyeliner
-Script to apply artificial eyeliner
+Script to apply artificial eyeliner using face landmark points detected by dlib.
 
 ## Demo:
 <table>
@@ -27,15 +27,17 @@ Script to apply artificial eyeliner
  * ```-c ```: Change color of the eyeliner. Use ```-c 255 255 255```. Defaule = ```0 0 0```.
  * ```-s ```: Location and file name you want to save the output to. **NOTE** The program automatically adds extension while saving the file. **NOTE**: If a file with same name already exists, it will overwrite that file.
  
-  
+ 
+## Flow Chart:
+<img src="https://github.com/kaushil24/Artificial-Eyeliner/blob/master/Media/working.jpg" height="1000">
 
-# Version Info:
-Python - 3.6
-Numpy - 1.17.4
-Dlib - 19.18.0
-cv2 - 4.1.2
-matplotlib - 3.1.2
-skimage - 0.16.2
-scipy - 1.3.3
-imutils - 0.5.3
-PIL - 6.2.1
+## Version Info:
+* Python - 3.6
+* Numpy - 1.17.4
+* Dlib - 19.18.0
+* cv2 - 4.1.2
+* matplotlib - 3.1.2
+* skimage - 0.16.2
+* scipy - 1.3.3
+* imutils - 0.5.3
+* PIL - 6.2.1
