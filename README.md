@@ -27,6 +27,8 @@ Script to apply artificial eyeliner using face landmark points detected by dlib.
  * ```-c ```: Change color of the eyeliner. Use ```-c 255 255 255```. Defaule = ```0 0 0```.
  * ```-s ```: Location and file name you want to save the output to. **NOTE** The program automatically adds extension while saving the file. **NOTE**: If a file with same name already exists, it will overwrite that file.
  
+### Sample Usage:
+```python eyeliner.py -v "Media/Sample Video.mp4" -t 2 -c 203 22 234 -s "Media/Output Video" ```
  
 ## Flow Chart:
 <img src="https://github.com/kaushil24/Artificial-Eyeliner/blob/master/Media/working.jpg" height="1000">
