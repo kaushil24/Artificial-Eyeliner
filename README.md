@@ -3,10 +3,11 @@ Script to apply artificial eyeliner
 
 ## Demo:
 **Images**
-![Before](https://github.com/kaushil24/Artificial-Eyeliner/blob/master/Media/Sample%20Image.jpg =250*250)
 Before
-![After](https://github.com/kaushil24/Artificial-Eyeliner/blob/master/Media/Output%20Image.png)
+![Before](https://github.com/kaushil24/Artificial-Eyeliner/blob/master/Media/Sample%20Image.jpg =250x250)
 After
+![After](https://github.com/kaushil24/Artificial-Eyeliner/blob/master/Media/Output%20Image.png =250x250)
+
 
 # Version Info:
 Python - 3.6
