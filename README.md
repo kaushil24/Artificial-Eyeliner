@@ -1,6 +1,13 @@
 # Artificial-Eyeliner
 Script to apply artificial eyeliner
 
+## Demo:
+**Images**
+![Before](https://github.com/kaushil24/Artificial-Eyeliner/blob/master/Media/Sample%20Image.jpg)
+Before
+![After](https://github.com/kaushil24/Artificial-Eyeliner/blob/master/Media/Output%20Image.png)
+After
+
 # Version Info:
 Python - 3.6
 Numpy - 1.17.4
