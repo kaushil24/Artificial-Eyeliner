@@ -11,7 +11,7 @@ from PIL import Image
 
 
 
-def getEyeLandnarkPts(face_landmark_points):
+def getEyeLandmarkPts(face_landmark_points):
     '''
     Input: Coordinates of Bounding Box single face
     Returns: eye's landmark points
@@ -100,30 +100,25 @@ def drawEyeliner(img, interp_pts, color = (85,90,92) , thickness = 1):
     return overlay
 
 
-
-
-if __name__ == "__main__":
-    cap = cv2.VideoCapture("Media/Sample Video 1.mp4") 
-    face_detector = dlib.get_frontal_face_detector()
-     
-
-    while(cap.isOpened()):
-        ret, frame = cap.read()
-        gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
-        bounding_boxes = face_detector(gray, 0)# The 2nd argument means that we upscale the image by 'x' number of times to detect more faces.
-        lndMrkDetector = dlib.shape_predictor("shape_predictor_68_face_landmarks.dat")
+def Eyeliner(frame):
+    gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
+    bounding_boxes = face_detector(gray, 0)# The 2nd argument means that we upscale the image by 'x' number of times to detect more faces.
         
+    for i, bb in enumerate(bounding_boxes):
+        face_landmark_points = lndMrkDetector(gray, bb)
+        face_landmark_points = face_utils.shape_to_np(face_landmark_points)
+        eye_landmark_points = getEyeLandmarkPts(face_landmark_points)
+        eyeliner_points = getEyelinerPoints(eye_landmark_points)
+        output_frame = drawEyeliner(frame, eyeliner_points,color=(0,0,0),thickness= 2) 
 
-        for i, bb in enumerate(bounding_boxes):
-            face_landmark_points = lndMrkDetector(gray, bb)
-            face_landmark_points = face_utils.shape_to_np(face_landmark_points)
-            eye_landmark_points = getEyeLandnarkPts(face_landmark_points)
-            eyeliner_points = getEyelinerPoints(eye_landmark_points)
-            output_frame = drawEyeliner(frame, eyeliner_points,color=(0,0,0),thickness= 2) 
-            
-        
-        
-        cv2.imshow("SDSD", cv2.resize(output_frame, (600,600)))
+    return output_frame
+
+def video(source = 0):
+    cap = cv2.VideoCapture(source)
+    while(cap.isOpened):
+        _ , frame = cap.read()
+        output_frame = Eyeliner(frame)
+        cv2.imshow("Artificial Eyeliner", cv2.resize(output_frame, (600,600)))
 
         if cv2.waitKey(1) & 0xFF == ord('q'):
             break
@@ -131,3 +126,9 @@ if __name__ == "__main__":
 
     cap.release()
     cv2.destroyAllWindows()
+
+if __name__ == "__main__":
+
+    face_detector = dlib.get_frontal_face_detector()
+    lndMrkDetector = dlib.shape_predictor("shape_predictor_68_face_landmarks.dat")
+    video("Media/Sample Video 1.mp4")
