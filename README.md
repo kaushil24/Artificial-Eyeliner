@@ -21,7 +21,7 @@ Script to apply artificial eyeliner using face landmark points detected by dlib.
  ```python eyeliner.py [-i image] [-v video] [-d dat] [-t thickness] [-c color] [-s save]```
  * ```-i ```: Location of image you want to apply eyeliner on
  * ```-v ```: Location of video you want to apply eyeliner on.
- * ```-v ```: Live eyeliner of webcam video if ```webcam``` is given
+ * ```-v ```: Live eyeliner of webcam video if ```webcam``` is given (Eg: ```python3 -v webcam -s "webcam"```)
  * ```-t ```: Whole interger number to set thickness of eyeliner. Default = ```2```. Recommended number value between 0-5
  * ```-d```: Path to your ```shape_predictor_68_face_landmarks.dat``` file. Default value is the root unless you have the ```shape_predictor_68_face_landmarks.dat``` file stored at some other location you need not use this argument.
  * ```-c ```: Change color of the eyeliner. Use ```-c 255 255 255```. Defaule = ```0 0 0```.
