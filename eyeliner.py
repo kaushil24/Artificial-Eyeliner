@@ -57,7 +57,7 @@ def getEyelinerPoints(eye_landmark_points):
     return [(L_interp_x, L_interp_top_y, L_interp_bottom_y), (R_interp_x, R_interp_top_y, R_interp_bottom_y)]
 
 
-def drawEyeliner(img, interp_pts, color = (85,90,92) , thickness = 1):
+def drawEyeliner(img, interp_pts):
     L_eye_interp, R_eye_interp = interp_pts
 
     L_interp_x, L_interp_top_y, L_interp_bottom_y = L_eye_interp
@@ -109,26 +109,78 @@ def Eyeliner(frame):
         face_landmark_points = face_utils.shape_to_np(face_landmark_points)
         eye_landmark_points = getEyeLandmarkPts(face_landmark_points)
         eyeliner_points = getEyelinerPoints(eye_landmark_points)
-        output_frame = drawEyeliner(frame, eyeliner_points,color=(0,0,0),thickness= 2) 
+        op = drawEyeliner(frame, eyeliner_points) 
 
-    return output_frame
+    return op
 
-def video(source = 0):
-    cap = cv2.VideoCapture(source)
-    while(cap.isOpened):
-        _ , frame = cap.read()
-        output_frame = Eyeliner(frame)
-        cv2.imshow("Artificial Eyeliner", cv2.resize(output_frame, (600,600)))
+def video(src = 0):
+    cap = cv2.VideoCapture(src)
+    if src==0:
+        while(True):
+            _ , frame = cap.read()
+            print("=====================")
+            print(type(frame))
+            output_frame = Eyeliner(frame)
+            try:
+                cv2.imshow("Artificial Eyeliner", cv2.resize(output_frame, (600,600)))
+            except:
+                continue
+            if cv2.waitKey(1) & 0xFF == ord('q'):
+                break
 
-        if cv2.waitKey(1) & 0xFF == ord('q'):
-            break
+    else:
+        while(cap.isOpened):
+            _ , frame = cap.read()
+            output_frame = Eyeliner(frame)
+            cv2.imshow("Artificial Eyeliner", cv2.resize(output_frame, (600,600)))
 
+            if cv2.waitKey(1) & 0xFF == ord('q'):
+                break
 
     cap.release()
     cv2.destroyAllWindows()
 
-if __name__ == "__main__":
 
+def image(source):
+    img = cv2.imread(source)
+    output_frame = Eyeliner(img)
+    cv2.imshow("Artificial Eyeliner", cv2.resize(output_frame, (600, 600)))
+    cv2.waitKey(0)
+    cv2.destroyAllWindows()
+
+
+if __name__ == "__main__":
+    
+    ap = argparse.ArgumentParser()
+    ap.add_argument("-v", "--video", required=False, help="Path to video file")
+    ap.add_argument("-i", "--image", required=False, help="Path to image")
+    ap.add_argument("-d", "--dat", required=False, help="Path to shape_predictor_68_face_landmarks.dat")
+    ap.add_argument("-t", "--thickness", required=False, help="Enter int value of thickness (recommended 0-5)")
+    ap.add_argument("-c", "--color", required=False, help='Enter R G B color value', nargs=3)
+    args = vars(ap.parse_args())
+
+    if args['dat']:
+        dataFile = args['dat']
+
+    else:
+        dataFile = "shape_predictor_68_face_landmarks.dat"
+
+    color = (0,0,0)
+    thickness = 2
     face_detector = dlib.get_frontal_face_detector()
-    lndMrkDetector = dlib.shape_predictor("shape_predictor_68_face_landmarks.dat")
-    video("Media/Sample Video 1.mp4")
+    lndMrkDetector = dlib.shape_predictor(dataFile)
+
+    if args['color']:
+        color = list(map(int, args['color']))
+        color = tuple(color)
+
+    if args['thickness']:
+        thickness = int(args['thickness'])
+
+    if args['image']:
+        image(args['image'])
+
+    if args['video']:
+        video(args['video'])
+    else:
+        video(0)
