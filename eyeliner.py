@@ -103,50 +103,60 @@ def drawEyeliner(img, interp_pts):
 def Eyeliner(frame):
     gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
     bounding_boxes = face_detector(gray, 0)# The 2nd argument means that we upscale the image by 'x' number of times to detect more faces.
+    if bounding_boxes:    
+        for i, bb in enumerate(bounding_boxes):
+            face_landmark_points = lndMrkDetector(gray, bb)
+            face_landmark_points = face_utils.shape_to_np(face_landmark_points)
+            eye_landmark_points = getEyeLandmarkPts(face_landmark_points)
+            eyeliner_points = getEyelinerPoints(eye_landmark_points)
+            op = drawEyeliner(frame, eyeliner_points) 
         
-    for i, bb in enumerate(bounding_boxes):
-        face_landmark_points = lndMrkDetector(gray, bb)
-        face_landmark_points = face_utils.shape_to_np(face_landmark_points)
-        eye_landmark_points = getEyeLandmarkPts(face_landmark_points)
-        eyeliner_points = getEyelinerPoints(eye_landmark_points)
-        op = drawEyeliner(frame, eyeliner_points) 
-
-    return op
+        return op
+    else:
+        return frame
 
 def video(src = 0):
+
     cap = cv2.VideoCapture(src)
-    if src==0:
-        while(True):
-            _ , frame = cap.read()
-            print("=====================")
-            print(type(frame))
-            output_frame = Eyeliner(frame)
-            try:
-                cv2.imshow("Artificial Eyeliner", cv2.resize(output_frame, (600,600)))
-            except:
-                continue
-            if cv2.waitKey(1) & 0xFF == ord('q'):
-                break
 
-    else:
-        while(cap.isOpened):
-            _ , frame = cap.read()
-            output_frame = Eyeliner(frame)
-            cv2.imshow("Artificial Eyeliner", cv2.resize(output_frame, (600,600)))
+    if args['save']:
+        if os.path.isfile(args['save']+'.avi'):
+            os.remove(args['save']+'.avi')
+        out = cv2.VideoWriter(args['save']+'.avi',cv2.VideoWriter_fourcc('M','J','P','G'), 30,(int(cap.get(3)),int(cap.get(4))))
+	
+    while(cap.isOpened):
+        _ , frame = cap.read()
+        output_frame = Eyeliner(frame)
 
-            if cv2.waitKey(1) & 0xFF == ord('q'):
-                break
+        if args['save']:
+            out.write(output_frame)
+
+        cv2.imshow("Artificial Eyeliner", cv2.resize(output_frame, (600,600)))
+
+        if cv2.waitKey(1) & 0xFF == ord('q'):
+            break
+
+    if args['save']:
+        out.release()
 
     cap.release()
     cv2.destroyAllWindows()
 
 
 def image(source):
-    img = cv2.imread(source)
-    output_frame = Eyeliner(img)
-    cv2.imshow("Artificial Eyeliner", cv2.resize(output_frame, (600, 600)))
-    cv2.waitKey(0)
-    cv2.destroyAllWindows()
+    if os.path.isfile(source):
+        img = cv2.imread(source)
+        output_frame = Eyeliner(img)
+        cv2.imshow("Artificial Eyeliner", cv2.resize(output_frame, (600, 600)))
+        if args['save']:
+            if os.path.isfile(args['save']+'.png'):
+                os.remove(args['save']+'.png')
+            cv2.imwrite(args['save']+'.png', output_frame)
+        cv2.waitKey(0)
+        cv2.destroyAllWindows()
+
+    else:
+        print("File not found :( ")
 
 
 if __name__ == "__main__":
@@ -157,6 +167,7 @@ if __name__ == "__main__":
     ap.add_argument("-d", "--dat", required=False, help="Path to shape_predictor_68_face_landmarks.dat")
     ap.add_argument("-t", "--thickness", required=False, help="Enter int value of thickness (recommended 0-5)")
     ap.add_argument("-c", "--color", required=False, help='Enter R G B color value', nargs=3)
+    ap.add_argument("-s", "--save", required=False, help='Enter the file name to save')
     args = vars(ap.parse_args())
 
     if args['dat']:
@@ -180,7 +191,12 @@ if __name__ == "__main__":
     if args['image']:
         image(args['image'])
 
-    if args['video']:
-        video(args['video'])
-    else:
+    if args['video'] and args['video']!='webcam':
+        if os.path.isfile(args['video']):
+            video(args['video'])
+
+        else:
+            print("File not found :( ")
+
+    elif args['video']=='webcam':
         video(0)
