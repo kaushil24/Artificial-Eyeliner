@@ -10,6 +10,13 @@ import os
 from PIL import Image
 
 
+overlay_crop = 0
+dataFile = "shape_predictor_68_face_landmarks.dat"
+
+color = (0,0,0)
+thickness = 2
+face_detector = dlib.get_frontal_face_detector()
+lndMrkDetector = dlib.shape_predictor(dataFile)
 
 def getEyeLandmarkPts(face_landmark_points):
     '''
@@ -90,6 +97,8 @@ def drawEyeliner(img, interp_pts):
         y2_bottom = R_interp_bottom_y[i+1]
         cv2.line(overlay, (x1, y1_bottom), (x1, y2_bottom), color, thickness)
 
+
+
     # background = Image.fromarray(img) # .convert("1")
     # foreground = Image.fromarray(overlay).convert("1")
 
@@ -97,7 +106,11 @@ def drawEyeliner(img, interp_pts):
     
     # # img = cv2.bitwise_and(overlay, img)
     # return cv2.cvtColor(np.array(newImg), cv2.COLOR_RGB2BGR)
-    return overlay
+
+    overlay_crop = overlay[min(L_interp_bottom_y) - 50 : max(L_interp_top_y) + 50, L_interp_x[0]-50 : L_interp_x[-1] + 50 ]
+    # print(max(L_interp_top_y) + 15, min(L_interp_bottom_y) - 15, L_interp_x[0]-10, L_interp_x[-1] + 10 )
+
+    return overlay, overlay_crop
 
 
 def Eyeliner(frame):
@@ -109,9 +122,9 @@ def Eyeliner(frame):
             face_landmark_points = face_utils.shape_to_np(face_landmark_points)
             eye_landmark_points = getEyeLandmarkPts(face_landmark_points)
             eyeliner_points = getEyelinerPoints(eye_landmark_points)
-            op = drawEyeliner(frame, eyeliner_points) 
+            op, op_crop = drawEyeliner(frame, eyeliner_points) 
         
-        return op
+        return op, op_crop
     else:
         return frame
 
@@ -126,12 +139,13 @@ def video(src = 0):
 	
     while(cap.isOpened):
         _ , frame = cap.read()
-        output_frame = Eyeliner(frame)
+        output_frame, op_crop = Eyeliner(frame)
 
         if args['save']:
             out.write(output_frame)
 
         cv2.imshow("Artificial Eyeliner", cv2.resize(output_frame, (600,600)))
+        cv2.imshow('Eye Region', cv2.resize(op_crop, (400, 200)))
 
         if cv2.waitKey(1) & 0xFF == ord('q'):
             break
